@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Wallpaper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1147 50%, #2d1b69 100%);
+            position: relative;
+        }
+
+        .neural-network {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .node {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(138, 180, 255, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(138, 180, 255, 0.8);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        .connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(138, 180, 255, 0.1), rgba(138, 180, 255, 0.4), rgba(138, 180, 255, 0.1));
+            transform-origin: left center;
+            animation: flow 4s linear infinite;
+        }
+
+        @keyframes flow {
+            0% { opacity: 0.2; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.2; }
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); }
+            100% { transform: translateY(-100vh) translateX(100px); }
+        }
+
+        .ai-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Arial', sans-serif;
+            font-size: 120px;
+            font-weight: bold;
+            color: transparent;
+            background: linear-gradient(45deg, #00f5ff, #7b2ff7, #f72585, #00f5ff);
+            background-size: 300% 300%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            animation: gradientShift 6s ease infinite;
+            text-shadow: 0 0 40px rgba(123, 47, 247, 0.5);
+            letter-spacing: 15px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .glow-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+            animation: moveAround 15s ease-in-out infinite;
+        }
+
+        .glow-circle:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(123, 47, 247, 0.6), transparent);
+            top: 20%;
+            left: 10%;
+        }
+
+        .glow-circle:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 245, 255, 0.6), transparent);
+            bottom: 20%;
+            right: 15%;
+            animation-delay: -5s;
+        }
+
+        .glow-circle:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(247, 37, 133, 0.6), transparent);
+            top: 60%;
+            left: 50%;
+            animation-delay: -10s;
+        }
+
+        @keyframes moveAround {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(50px, 100px); }
+            66% { transform: translate(-30px, -50px); }
+        }
+
+        .grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(138, 180, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(138, 180, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid"></div>
+    
+    <div class="glow-circle"></div>
+    <div class="glow-circle"></div>
+    <div class="glow-circle"></div>
+
+    <div class="neural-network" id="network"></div>
+
+    <div class="ai-text">AI</div>
+
+    <script>
+        const network = document.getElementById('network');
+        const nodes = [];
+        const nodeCount = 30;
+
+        // Create nodes
+        for (let i = 0; i < nodeCount; i++) {
+            const node = document.createElement('div');
+            node.className = 'node';
+            node.style.left = Math.random() * 100 + '%';
+            node.style.top = Math.random() * 100 + '%';
+            node.style.animationDelay = Math.random() * 3 + 's';
+            network.appendChild(node);
+            nodes.push({
+                element: node,
+                x: parseFloat(node.style.left),
+                y: parseFloat(node.style.top)
+            });
+        }
+
+        // Create connections between nearby nodes
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const dx = nodes[j].x - nodes[i].x;
+                const dy = nodes[j].y - nodes[i].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 25) {
+                    const connection = document.createElement('div');
+                    connection.className = 'connection';
+                    connection.style.left = nodes[i].x + '%';
+                    connection.style.top = nodes[i].y + '%';
+                    connection.style.width = distance + 'vw';
+                    connection.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+                    connection.style.animationDelay = Math.random() * 4 + 's';
+                    network.appendChild(connection);
+                }
+            }
+        }
+
+        // Create floating particles
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            network.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
