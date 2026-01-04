@@ -158,11 +158,3 @@ Twitter (X): @omgedam
 LinkedIn: Om Gedam
 
 Portfolio: https://ogworks.lovable.app
-
-## Support
-
-If you like this project, please give it a ⭐️!
-
----
-
-Made with ❤️ and CSS animations
